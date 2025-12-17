@@ -1,0 +1,10 @@
+@import "tailwindcss";
+
+/* Force class-strategy for dark mode in Tailwind v4 */
+@variant dark (&:where(.dark, .dark *));
+
+/* Re-declare standard properties if needed or just use built-in */
+
+body {
+    @apply bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-white transition-colors duration-200;
+}
