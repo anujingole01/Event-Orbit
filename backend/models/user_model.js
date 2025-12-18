@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
   profilePic: { type: String },
   role: { type: String, default: "user", enum: ["user", "organizer", "admin"] },
   walletBalance: { type: Number, default: 0 },
+  location: { type: String },
   kycStatus: { type: String, enum: ['pending', 'approved', 'rejected', 'not_submitted'], default: 'not_submitted' },
   kycDocuments: [
     {

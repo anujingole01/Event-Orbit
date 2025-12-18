@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User, Mail, Shield, Key, Smartphone, CheckCircle, AlertCircle } from 'lucide-react';
+import axios from 'axios';
 
 const Profile = () => {
     const [activeTab, setActiveTab] = useState('personal');
@@ -7,12 +8,51 @@ const Profile = () => {
     const [showRecoveryModal, setShowRecoveryModal] = useState(false);
 
     const [adminDetails, setAdminDetails] = useState({
-        name: 'Admin User',
-        email: 'admin@eventorbit.com',
+        name: '',
+        email: '',
         role: 'Super Admin',
-        phone: '+1 (555) 123-4567',
-        location: 'New York, USA'
+        phone: '',
+        location: ''
     });
+
+    useEffect(() => {
+        fetchAdminProfile();
+    }, []);
+
+    const fetchAdminProfile = async () => {
+        try {
+            const response = await axios.get('http://localhost:5000/api/admin/profile');
+            if (response.data) {
+                setAdminDetails({
+                    name: response.data.fullName,
+                    email: response.data.email,
+                    role: 'Super Admin', // Keep static or fetch if role has more details
+                    phone: response.data.phone || '',
+                    location: response.data.location || '' // Now supported by backend
+                });
+            }
+        } catch (error) {
+            console.error("Error fetching profile:", error);
+        }
+    };
+
+    const handleUpdateProfile = async () => {
+        try {
+            await axios.put('http://localhost:5000/api/admin/profile', {
+                fullName: adminDetails.name,
+                phone: adminDetails.phone,
+                location: adminDetails.location
+            });
+            alert('Profile updated successfully!');
+            // Reflect changes locally if needed, but state is already updated via input
+            // Maybe trigger a navbar refresh via context or just reload (simple way)
+            // For now, just alert.
+            window.location.reload(); // To update Navbar as well since it fetches on mount
+        } catch (error) {
+            console.error("Error updating profile:", error);
+            alert('Failed to update profile.');
+        }
+    };
 
     return (
         <div className="space-y-6">
@@ -104,7 +144,9 @@ const Profile = () => {
                                     </div>
                                 </div>
                                 <div className="pt-4 flex justify-end">
-                                    <button className="px-6 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-medium transition-colors">
+                                    <button
+                                        onClick={handleUpdateProfile}
+                                        className="px-6 py-2 bg-violet-600 hover:bg-violet-700 text-white rounded-lg font-medium transition-colors">
                                         Save Changes
                                     </button>
                                 </div>

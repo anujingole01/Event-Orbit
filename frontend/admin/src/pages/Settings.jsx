@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import { Settings as SettingsIcon, Bell, Globe, Shield, Save, Monitor } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
 
@@ -145,7 +146,7 @@ const Settings = () => {
                                     <p className="text-sm text-slate-500 dark:text-slate-400">Advanced settings for the platform.</p>
                                 </div>
 
-                                <div className="p-4 border border-red-200 dark:border-red-900/30 bg-red-50 dark:bg-red-900/10 rounded-lg">
+                                <div className="p-4 border border-red-200 dark:border-red-900/30 bg-red-50 dark:bg-red-900/10 rounded-lg space-y-4">
                                     <div className="flex items-center justify-between">
                                         <div>
                                             <p className="font-medium text-red-700 dark:text-red-400">Maintenance Mode</p>
@@ -157,6 +158,27 @@ const Settings = () => {
                                         >
                                             <span className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${settings.maintenanceMode ? 'translate-x-6' : 'translate-x-1'}`} />
                                         </button>
+                                    </div>
+
+                                    <div className="border-t border-red-200 dark:border-red-900/30 pt-4">
+                                        <div className="flex items-center justify-between">
+                                            <div>
+                                                <p className="font-medium text-red-700 dark:text-red-400">Clear Database</p>
+                                                <p className="text-xs text-red-600/80 dark:text-red-400/70">Permanently delete all Users, Events, and Bookings.</p>
+                                            </div>
+                                            <button
+                                                onClick={() => {
+                                                    if (window.confirm("ARE YOU SURE? This will delete ALL data (Users, Events, Bookings) permanently. This action cannot be undone.")) {
+                                                        axios.delete('http://localhost:5000/api/admin/clear-database')
+                                                            .then(() => alert("Database cleared successfully!"))
+                                                            .catch(err => alert("Failed to clear database: " + err.message));
+                                                    }
+                                                }}
+                                                className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-xs font-bold rounded-lg transition-colors"
+                                            >
+                                                Delete All Data
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
 

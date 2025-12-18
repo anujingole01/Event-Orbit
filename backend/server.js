@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import eventRoutes from "./routes/event_routes.js";
 import authRoutes from "./routes/auth_routes.js";
 import organizerRoutes from "./routes/organizer_routes.js";
+import adminRoutes from "./routes/admin_routes.js";
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use(cors());
 app.use("/api/events", eventRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/organizer", organizerRoutes);
+app.use("/api/admin", adminRoutes);
 
 // Database Connection
 mongoose.connect(MONGO_URI)
