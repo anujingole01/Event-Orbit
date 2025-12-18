@@ -51,18 +51,18 @@ const Dashboard = () => {
             color: 'bg-green-500',
             onClick: () => navigate('/revenue')
         },
-        { title: 'Total Events', value: stats.totalEvents, icon: Calendar, color: 'bg-violet-500' },
+        { title: 'Total Events', value: stats.totalEvents, icon: Calendar, color: 'bg-yellow-500' },
         { title: 'Total Users', value: stats.totalUsers, icon: Users, color: 'bg-blue-500' },
         { title: 'Organizers', value: stats.totalOrganizers, icon: Briefcase, color: 'bg-orange-500' },
     ];
 
     if (loading) {
-        return <div className="flex justify-center items-center h-64 text-slate-500">Loading dashboard...</div>;
+        return <div className="flex justify-center items-center h-64 text-[var(--text-muted)]">Loading dashboard...</div>;
     }
 
     return (
         <div className="space-y-6">
-            <h2 className="text-2xl font-bold text-slate-900 dark:text-white">Dashboard Overview</h2>
+            <h2 className="text-2xl font-bold text-[var(--text-page)]">Dashboard Overview</h2>
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
@@ -70,18 +70,18 @@ const Dashboard = () => {
                     <div
                         key={index}
                         onClick={card.onClick}
-                        className={`p-6 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700 hover:transform hover:scale-105 transition-all ${card.onClick ? 'cursor-pointer hover:border-violet-500 dark:hover:border-violet-500' : ''}`}
+                        className={`p-6 bg-[var(--bg-card)] rounded-xl shadow-sm border border-[var(--border-color)] hover:shadow-md transition-all ${card.onClick ? 'cursor-pointer hover:border-yellow-500' : ''}`}
                     >
                         <div className="flex items-center justify-between">
                             <div>
-                                <p className="text-sm text-slate-500 dark:text-slate-400">{card.title}</p>
-                                <p className="text-2xl font-bold text-slate-900 dark:text-white mt-1">{card.value}</p>
+                                <p className="text-sm text-[var(--text-muted)]">{card.title}</p>
+                                <p className="text-2xl font-bold text-[var(--text-page)] mt-1">{card.value}</p>
                             </div>
-                            <div className={`p-3 rounded-lg ${card.color} bg-opacity-20 text-white`}>
+                            <div className={`p-3 rounded-xl ${card.color} bg-opacity-20 text-white`}>
                                 <card.icon className="w-6 h-6" />
                             </div>
                         </div>
-                        <div className="mt-4 flex items-center text-xs text-green-400">
+                        <div className="mt-4 flex items-center text-xs text-green-500">
                             <TrendingUp className="w-3 h-3 mr-1" />
                             <span>Real-time updates</span>
                         </div>
@@ -91,39 +91,39 @@ const Dashboard = () => {
 
             {/* Charts Section */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="hidden hidden lg:block lg:col-span-2 p-6 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700">
-                    <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Event Analytics (Monthly)</h3>
+                <div className="hidden lg:block lg:col-span-2 p-6 bg-[var(--bg-card)] rounded-xl shadow-sm border border-[var(--border-color)]">
+                    <h3 className="text-lg font-semibold text-[var(--text-page)] mb-4">Event Analytics (Monthly)</h3>
                     <div className="h-64">
                         <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={stats.chartData || []}>
                                 <XAxis dataKey="name" stroke="#94a3b8" />
                                 <YAxis stroke="#94a3b8" />
                                 <Tooltip
-                                    contentStyle={{ backgroundColor: '#1e293b', border: 'none', borderRadius: '8px' }}
-                                    itemStyle={{ color: '#fff' }}
+                                    contentStyle={{ backgroundColor: 'var(--bg-card)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-page)' }}
+                                    itemStyle={{ color: 'var(--text-page)' }}
                                 />
-                                <Bar dataKey="events" fill="#8b5cf6" radius={[4, 4, 0, 0]} />
+                                <Bar dataKey="events" fill="#eab308" radius={[4, 4, 0, 0]} />
                             </BarChart>
                         </ResponsiveContainer>
                     </div>
                 </div>
 
                 {/* Pending Approvals */}
-                <div className="p-6 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700">
-                    <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">Pending Approvals</h3>
+                <div className="p-6 bg-[var(--bg-card)] rounded-xl shadow-sm border border-[var(--border-color)]">
+                    <h3 className="text-lg font-semibold text-[var(--text-page)] mb-4">Pending Approvals</h3>
                     <div className="space-y-4">
                         {pendingEventsList.length === 0 ? (
-                            <p className="text-sm text-slate-500 dark:text-slate-400">No pending events.</p>
+                            <p className="text-sm text-[var(--text-muted)]">No pending events.</p>
                         ) : (
                             pendingEventsList.map((event) => (
-                                <div key={event._id} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-900 rounded-lg">
+                                <div key={event._id} className="flex items-center justify-between p-3 bg-[var(--bg-subtle)] rounded-lg">
                                     <div className="flex items-center">
-                                        <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 flex items-center justify-center text-xs text-slate-600 dark:text-slate-300">
+                                        <div className="w-10 h-10 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center text-xs text-slate-600 dark:text-slate-300">
                                             {event.title.substring(0, 2).toUpperCase()}
                                         </div>
                                         <div className="ml-3">
-                                            <p className="text-sm font-medium text-slate-900 dark:text-white truncate w-32">{event.title}</p>
-                                            <p className="text-xs text-slate-500 dark:text-slate-400">by {event.organizer?.fullName || 'Unknown'}</p>
+                                            <p className="text-sm font-medium text-[var(--text-page)] truncate w-32">{event.title}</p>
+                                            <p className="text-xs text-[var(--text-muted)]">by {event.organizer?.fullName || 'Unknown'}</p>
                                         </div>
                                     </div>
                                     <span className="text-xs px-2 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 rounded-full">Pending</span>

@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Bell, Search, LayoutDashboard, Calendar, Users, Briefcase, Sun, Moon, Settings, LogOut, User } from 'lucide-react';
+import { Bell, Search, LayoutDashboard, Calendar, Users, Briefcase, Sun, Moon, Settings, LogOut, User, Ticket } from 'lucide-react';
 import { useTheme } from '../context/ThemeContext';
+import axios from 'axios';
 
 const Navbar = () => {
     const location = useLocation();
@@ -13,6 +14,10 @@ const Navbar = () => {
         { id: 2, text: 'Organizer "John Doe" registered', time: '1 hour ago', isRead: false },
         { id: 3, text: 'Monthly revenue report available', time: '2 hours ago', isRead: true },
     ]);
+    const [adminInfo, setAdminInfo] = useState({
+        fullName: 'Admin User',
+        email: 'admin@eventorbit.com'
+    });
 
     const dropdownRef = useRef(null);
     const notificationRef = useRef(null);
@@ -28,6 +33,21 @@ const Navbar = () => {
     };
 
     useEffect(() => {
+        const fetchAdminProfile = async () => {
+            try {
+                const response = await axios.get('http://localhost:5000/api/admin/profile');
+                if (response.data) {
+                    // Update specific notification or state if needed, or just keep as is
+                    // But we want to use this data for the profile dropdown.
+                    // We need a state for admin info.
+                    setAdminInfo(response.data);
+                }
+            } catch (error) {
+                console.error("Error fetching admin profile:", error);
+            }
+        };
+        fetchAdminProfile();
+
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setIsDropdownOpen(false);
@@ -51,12 +71,14 @@ const Navbar = () => {
     ];
 
     return (
-        <header className="flex items-center justify-between h-16 px-6 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 sticky top-0 z-10 transition-colors duration-200">
+        <header className="flex items-center justify-between h-16 px-6 bg-[var(--bg-card)] dark:bg-[#0f172a] border-b border-[var(--border-color)] sticky top-0 z-10 transition-colors duration-200">
+            {/* Left Side (Breadcrumbs or Page Title - Optional, implies context from Sidebar) */}
             {/* Logo & Brand */}
             <div className="flex items-center mr-8">
-                <h1 className="text-xl font-bold bg-gradient-to-r from-violet-400 to-fuchsia-500 bg-clip-text text-transparent">
-                    EO Admin
-                </h1>
+                <Ticket className="w-8 h-8 text-yellow-500 fill-yellow-500 mr-2" />
+                <span className="text-xl font-bold text-[var(--text-page)]">
+                    EO <span className="text-yellow-500">Admin</span>
+                </span>
             </div>
 
             {/* Navigation Links */}
@@ -93,19 +115,19 @@ const Navbar = () => {
                 {/* Search - Compact Version */}
                 <div className="relative hidden lg:block">
                     <span className="absolute inset-y-0 left-0 flex items-center pl-3">
-                        <Search className="w-4 h-4 text-slate-400" />
+                        <Search className="w-4 h-4 text-[var(--text-muted)]" />
                     </span>
                     <input
                         type="text"
-                        className="w-48 py-1.5 pl-9 pr-4 text-sm text-slate-900 dark:text-white bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg focus:outline-none focus:border-violet-500 focus:ring-1 focus:ring-violet-500 transition-colors"
-                        placeholder="Search..."
+                        className="w-64 py-2 pl-9 pr-4 text-sm text-[var(--text-page)] bg-[var(--bg-subtle)] border border-[var(--border-color)] rounded-full focus:outline-none focus:border-yellow-500 focus:ring-1 focus:ring-yellow-500 transition-colors"
+                        placeholder="Search events..."
                     />
                 </div>
 
                 <div className="relative" ref={notificationRef}>
                     <button
                         onClick={toggleNotifications}
-                        className="relative p-2 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full transition-colors"
+                        className="relative p-2 text-[var(--text-muted)] hover:text-[var(--text-page)] hover:bg-[var(--bg-subtle)] rounded-full transition-colors"
                     >
                         <Bell className="w-5 h-5" />
                         {unreadCount > 0 && (
@@ -143,18 +165,18 @@ const Navbar = () => {
                 <div className="relative" ref={dropdownRef}>
                     <button
                         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                        className="flex items-center space-x-2 cursor-pointer p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors focus:outline-none"
+                        className="flex items-center space-x-2 cursor-pointer p-1 hover:bg-[var(--bg-subtle)] rounded-lg transition-colors focus:outline-none"
                     >
-                        <div className="w-8 h-8 rounded-full bg-violet-500 flex items-center justify-center text-white font-bold text-xs">
-                            A
+                        <div className="w-8 h-8 rounded-full bg-yellow-500 flex items-center justify-center text-slate-900 font-bold text-xs">
+                            {adminInfo.fullName ? adminInfo.fullName.charAt(0).toUpperCase() : 'A'}
                         </div>
                     </button>
 
                     {isDropdownOpen && (
                         <div className="absolute right-0 top-full mt-2 w-48 bg-white dark:bg-slate-800 rounded-lg shadow-lg py-1 border border-slate-200 dark:border-slate-700 z-50">
                             <div className="px-4 py-2 border-b border-slate-200 dark:border-slate-700">
-                                <p className="text-sm font-medium text-slate-900 dark:text-white">Admin User</p>
-                                <p className="text-xs text-slate-500 dark:text-slate-400">admin@eventorbit.com</p>
+                                <p className="text-sm font-medium text-slate-900 dark:text-white">{adminInfo.fullName}</p>
+                                <p className="text-xs text-slate-500 dark:text-slate-400">{adminInfo.email}</p>
                             </div>
                             <Link
                                 to="/profile"

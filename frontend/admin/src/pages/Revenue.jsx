@@ -25,16 +25,38 @@ const Revenue = () => {
         fetchRevenueData();
     }, []);
 
-    // Mock monthly data for the chart (in a real app, this would be aggregated from DB)
-    const monthlyData = [
-        { name: 'Jan', revenue: 4000 },
-        { name: 'Feb', revenue: 3000 },
-        { name: 'Mar', revenue: 2000 },
-        { name: 'Apr', revenue: 2780 },
-        { name: 'May', revenue: 1890 },
-        { name: 'Jun', revenue: 2390 },
-        { name: 'Jul', revenue: 3490 },
-    ];
+    // Aggregate revenue by month from actual events
+    const processChartData = (eventsList) => {
+        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const monthlyRevenue = {};
+
+        eventsList.forEach(event => {
+            if (event.status === 'approved') { // Only count approved events or all? Assuming all for now based on previous logic, but let's stick to sold tickets
+                const date = new Date(event.date);
+                const month = monthNames[date.getMonth()];
+                const revenue = event.ticketsSold * event.price;
+
+                if (monthlyRevenue[month]) {
+                    monthlyRevenue[month] += revenue;
+                } else {
+                    monthlyRevenue[month] = revenue;
+                }
+            }
+        });
+
+        // Ensure all months are represented or just existing ones? Let's just show existing ones sorted by date if possible, or just standard months.
+        // For simplicity and chart look, let's map the months that have data or a fixed range if preferred.
+        // Let's go with mapped existing months for now.
+
+        // Better approach: Create an array for the last 6 months or current year.
+        // For this iteration, let's just map the gathered data to the array format.
+        return Object.keys(monthlyRevenue).map(key => ({
+            name: key,
+            revenue: monthlyRevenue[key]
+        }));
+    };
+
+    const chartData = React.useMemo(() => processChartData(events), [events]);
 
     if (loading) return <div className="p-6 text-slate-500">Loading revenue details...</div>;
 
@@ -55,19 +77,21 @@ const Revenue = () => {
                     <h3 className="text-3xl font-bold text-slate-900 dark:text-white mt-1">₹{totalRevenue.toLocaleString()}</h3>
                     <div className="mt-2 text-xs text-green-500 flex items-center">
                         <TrendingUp className="w-3 h-3 mr-1" />
-                        +12.5% from last month
+                        <span>Based on ticket sales</span>
                     </div>
                 </div>
                 <div className="p-6 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700">
-                    <p className="text-sm text-slate-500 dark:text-slate-400">Pending Payouts</p>
-                    <h3 className="text-3xl font-bold text-slate-900 dark:text-white mt-1">₹12,450</h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400">Total Bookings</p>
+                    <h3 className="text-3xl font-bold text-slate-900 dark:text-white mt-1">
+                        {events.reduce((acc, curr) => acc + curr.ticketsSold, 0).toLocaleString()}
+                    </h3>
                     <div className="mt-2 text-xs text-slate-400">
-                        For 5 organizers
+                        Across all events
                     </div>
                 </div>
                 <div className="p-6 bg-white dark:bg-slate-800 rounded-xl shadow-lg border border-slate-200 dark:border-slate-700">
                     <p className="text-sm text-slate-500 dark:text-slate-400">Avg. Revenue per Event</p>
-                    <h3 className="text-3xl font-bold text-slate-900 dark:text-white mt-1">₹{(totalRevenue / (events.length || 1)).toFixed(0).toLocaleString()}</h3>
+                    <h3 className="text-3xl font-bold text-slate-900 dark:text-white mt-1">₹{(events.length ? (totalRevenue / events.length) : 0).toFixed(0).toLocaleString()}</h3>
                 </div>
             </div>
 
@@ -76,7 +100,7 @@ const Revenue = () => {
                 <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-6">Revenue Growth</h3>
                 <div className="h-80">
                     <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={monthlyData}>
+                        <AreaChart data={chartData.length > 0 ? chartData : [{ name: 'No Data', revenue: 0 }]}>
                             <defs>
                                 <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
                                     <stop offset="5%" stopColor="#8b5cf6" stopOpacity={0.8} />
