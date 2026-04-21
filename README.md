@@ -192,5 +192,4 @@ Organizer payout settlements
 
 Dark mode UI
 
-Multi‑language support
 
