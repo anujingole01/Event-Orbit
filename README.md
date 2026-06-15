@@ -132,7 +132,7 @@ git clone https://github.com/paraspathania/EventOrbit.git
 cd event-booking-system
 
 🔧 Backend Setup
-cd backend
+
 npm install
 npm run dev
 
