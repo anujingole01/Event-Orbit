@@ -190,6 +190,5 @@ Push notifications + email alerts
 
 Organizer payout settlements
 
-Dark mode UI
 
 
