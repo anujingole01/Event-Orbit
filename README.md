@@ -6,7 +6,7 @@ A scalable event management and ticket booking system built using the MERN Stack
 
 🛡 Admin Panel – Oversee organizers, event approvals, payments & venues
 
-EventTix is designed with modular architecture, role‑based access control, and a clean folder structure suitable for production‑grade deployment.
+EventOrbit is designed with modular architecture, role‑based access control, and a clean folder structure suitable for production‑grade deployment.
 
 📑 Table of Contents
 Features
